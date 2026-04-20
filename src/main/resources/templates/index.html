@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battleship Game</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body class="index-page">
+    <h1>Welcome to Battleship!</h1>
+    <div th:if="${error == 20}" class="error-message">
+        <p>Requested page not found!</p>
+    </div>
+    <div th:if="${error == 30}" class="error-message">
+        <p>Unknown error!</p>
+    </div>
+    <div th:if="${abortGameQuestion == null}">
+        <p>Click below to start a new game...</p>
+        <a href="/game" class="button">Start Game</a>
+        <br>
+        <img th:src="@{/qrCode/game}" />
+    </div>
+    <div th:if="${abortGameQuestion != null}">
+        <p>Game in progress.</p>
+        <p>Do you want to start new game?</p>
+        <a href="/game?abortGame=true" class="button">Yes</a>
+        <a href="/game" class="button" style="background-color: #f44336;">No</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: BattleShip
+logging:
+  level:
+    root: INFO
+    org:
+      springframework: INFO
+    com:
+      game: DEBUG
+server:
+  port: 8080
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operations-sorter: method
+    tags-sorter: alpha
+  show-actuator: true

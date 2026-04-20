@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battleship Game</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <script type="text/javascript" th:src="@{/js/gameScripts.js}"></script>
+</head>
+<body class="game-page">
+    <h1>Battleship Game</h1>
+    <div class="message" th:text="${game.status.message}"></div>
+
+    <div th:if="${game.status.state.name() == 'PLACING_SHIPS'}">
+        <h2>Place Your Ships</h2>
+        <div th:if="${placeShipResult == false}" class="error-message">
+            <p>Failed to place ship. Please check the position and try again.</p>
+        </div>
+        <div th:if="${placeShipResult == true}" class="success-message">
+            <p>Ship placed successfully!</p>
+        </div>
+        <div th:if="${error == 10}" class="error-message">
+            <p>Incorrect action. Pleas try again!</p>
+        </div>
+        <div class="ship-placement">
+            <form th:action="@{/placeShip}" method="post">
+                <div class="ship-selection">
+                    <label>Ship: </label>
+                    <select name="shipName">
+                        <option th:if="${!game.human.board.hasShip('CARRIER')}" value="CARRIER">Carrier (5)</option>
+                        <option th:if="${!game.human.board.hasShip('BATTLESHIP')}" value="BATTLESHIP">Battleship (4)</option>
+                        <option th:if="${!game.human.board.hasShip('CRUISER')}" value="CRUISER">Cruiser (3)</option>
+                        <option th:if="${!game.human.board.hasShip('SUBMARINE')}" value="SUBMARINE">Submarine (3)</option>
+                        <option th:if="${!game.human.board.hasShip('DESTROYER')}" value="DESTROYER">Destroyer (2)</option>
+                    </select>
+                </div>
+                <div class="position-selection">
+                    <label>Row: </label><input type="number" name="row" id="shipRow" min="0" max="9" required>
+                    <label>Col: </label><input type="number" name="col" id="shipCol" min="0" max="9" required>
+                    <label>Horizontal: </label><input type="checkbox" name="horizontal">
+                </div>
+                <button type="submit">Place Ship</button>
+            </form>
+        </div>
+        <div class="board">
+            <h3>Your Board</h3>
+            <table>
+                <tr th:each="i : ${#numbers.sequence(0,9)}">
+                    <td th:each="j : ${#numbers.sequence(0,9)}"
+                        th:class="${game.human.board.cells[i][j].hasShip ? 'ship' : ''}"
+                        th:text="${game.human.board.cells[i][j].hasShip ? 'S' : ''}"
+                        th:onclick="'setPosition(' + this + ',' + ${i} + ',' + ${j} +');'">
+
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div th:if="${game.status.state.name() == 'PLAYING'}">
+        <div class="boards">
+        <div class="board">
+            <h3>Your Board</h3>
+            <table>
+                <tr th:each="i : ${#numbers.sequence(0,9)}">
+                    <td th:each="j : ${#numbers.sequence(0,9)}"
+                        th:class="${game.human.board.cells[i][j].isHitShip() ? 'hit' : (game.human.board.cells[i][j].isMiss() ? 'miss' : (game.human.board.cells[i][j].hasShip ? 'ship' : ''))}"
+                        th:text="${game.human.board.cells[i][j].isHitShip() ? 'X' : (game.human.board.cells[i][j].isMiss() ? 'O' : (game.human.board.cells[i][j].hasShip ? 'S' : ''))}"></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="board">
+            <h3>Computer Board</h3>
+            <div th:if="${attackResult == T(com.game.battleship.model.Board.ATTACK_RESULT).MISS}" class="miss-message">
+                <p>You miss.</p>
+            </div>
+            <div th:if="${attackResult == T(com.game.battleship.model.Board.ATTACK_RESULT).HIT}" class="hit-message">
+                <p>You hit a ship!</p>
+            </div>
+            <div th:if="${attackResult == T(com.game.battleship.model.Board.ATTACK_RESULT).SUNK}" class="error-message">
+                <p>The ship sunk!</p>
+            </div>
+            <table>
+                <tr th:each="i : ${#numbers.sequence(0,9)}">
+                    <td th:each="j : ${#numbers.sequence(0,9)}"
+                        th:class="${game.computer.board.cells[i][j].isHitShip() ? 'hit' : (game.computer.board.cells[i][j].isMiss() ? 'miss' : '')}"
+                        th:text="${game.computer.board.cells[i][j].isHitShip() ? 'X' : (game.computer.board.cells[i][j].isMiss() ? 'O' : '')}"
+                        th:onclick="'attack(this,' + ${i} + ',' + ${j} + ')'"></td>
+                </tr>
+            </table>
+        </div>
+        </div>
+
+        <form id="attackForm" th:action="@{/attack}" method="post" style="display: none;">
+            <input type="hidden" name="row" id="attackRow">
+            <input type="hidden" name="col" id="attackCol">
+        </form>
+    </div>
+
+    <div th:if="${game.status.state.name() == 'GAME_OVER'}">
+        <h2>Game Over</h2>
+        <form th:action="@{/newGame}" method="post">
+            <button type="submit" class="button">New Game</button>
+        </form>
+    </div>
+
+    <script>
+        function attack(cell, row, col) {
+            if (cell.textContent === '') {
+                document.getElementById('attackRow').value = row;
+                document.getElementById('attackCol').value = col;
+                document.getElementById('attackForm').submit();
+            }
+        }
+    </script>
+</body>
+</html>
