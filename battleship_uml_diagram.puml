@@ -1,0 +1,117 @@
+@startuml Diagram Klas UML dla Projektu Battleship
+
+class Game {
+    - Player human
+    - Player computer
+    - GameStatus status
+}
+
+class Player {
+    - String name
+    - Board board
+    + attack(Player opponent, int row, int col): ATTACK_RESULT
+    + hasLost(): boolean
+}
+
+class Board {
+    - Cell[][] cells
+    - List<Ship> ships
+    + placeShip(Ship ship, int startRow, int startCol, boolean horizontal): boolean
+    + attack(int row, int col): ATTACK_RESULT
+    + allShipsSunk(): boolean
+    + hasShip(String shipName): boolean
+}
+
+class Cell {
+    - boolean hasShip
+    - boolean isHit
+    - Ship ship
+    + setShip(Ship ship)
+    + isHitShip(): boolean
+    + isMiss(): boolean
+}
+
+class Ship {
+    - String name
+    - int size
+    - List<Cell> cells
+    - boolean sunk
+    + checkIfSunk(): boolean
+}
+
+class GameStatus {
+    - Player currentPlayer
+    - GameState state
+    - String message
+}
+
+enum GameState {
+    PLACING_SHIPS
+    PLAYING
+    GAME_OVER
+}
+
+enum ATTACK_RESULT {
+    FAULT
+    MISS
+    HIT
+    SUNK
+}
+
+enum ShipType {
+    CARRIER
+    BATTLESHIP
+    CRUISER
+    SUBMARINE
+    DESTROYER
+}
+
+class GameManager {
+    - Random numbersGenerator
+    + placeShip(Game game, String shipType, int row, int col, boolean horizontal): boolean
+    + startNewGame(): Game
+}
+
+class AttackService {
+    - Random numbersGenerator
+    + performAttackRound(Game game, int row, int col): ATTACK_RESULT
+}
+
+class CodesManager {
+    + getQRCodeAsBytes(String data): byte[]
+}
+
+class GameController {
+    - GameManager gameManager
+    - AttackService attackService
+}
+
+class QrCodeController {
+    - CodesManager codesManager
+}
+
+class GameFactory {
+    + createBasicGame(): Game
+}
+
+class ShipFactory {
+    + createShipByTypeName(String typeName): Ship
+}
+
+Game *-- Player : human
+Game *-- Player : computer
+Game *-- GameStatus : status
+Player *-- Board : board
+Board *-- Cell : cells
+Board *-- Ship : ships
+Ship *-- Cell : cells
+GameStatus *-- Player : currentPlayer
+GameManager ..> GameFactory : uses
+GameManager ..> ShipFactory : uses
+GameController ..> GameManager : uses
+GameController ..> AttackService : uses
+QrCodeController ..> CodesManager : uses
+AttackService ..> Game : uses
+GameManager ..> Game : uses
+
+@enduml

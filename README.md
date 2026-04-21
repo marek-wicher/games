@@ -62,6 +62,13 @@ Computer opponent randomly places its ships and attacks the player's board. The 
 4. **Win Condition**: Sink all of the opponent's ships to win. The game ends when one player's fleet is destroyed.
 5. **New Game**: Start over at any time.
 
+## Architecture Diagram
+
+Below is the UML class diagram for the Battleship project:
+
+![Battleship UML Diagram](UMLClassDiagram.png)
+
+
 ## Project Structure
 
 - `src/main/java/com/gra/statki/`: Java source code
