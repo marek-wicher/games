@@ -38,14 +38,14 @@ public class GameRestController {
 
     @GetMapping("/state")
     @Operation(summary = "Get current game state", description = "Returns the current state of the game")
-    public ResponseEntity<GameStateDto> getGameState(HttpSession session) {
+    public GameStateDto getGameState(HttpSession session) {
         Game game = getGameFromSession(session);
-        return ResponseEntity.ok(GameStateDto.fromGame(game));
+        return GameStateDto.fromGame(game);
     }
 
     @PostMapping("/place-ship")
     @Operation(summary = "Place a ship on the board", description = "Places a human player's ship at the specified position and orientation")
-    public ResponseEntity<PlaceShipResponseDto> placeShip(
+    public PlaceShipResponseDto placeShip(
             @RequestBody PlaceShipRequestDto request,
             HttpSession session) {
         
@@ -63,18 +63,16 @@ public class GameRestController {
 
         String message = success ? "Ship placed successfully" : "Failed to place ship - invalid position or ship already placed";
 
-        PlaceShipResponseDto response = PlaceShipResponseDto.builder()
+        return PlaceShipResponseDto.builder()
                 .success(success)
                 .message(message)
                 .gameState(GameStateDto.fromGame(game))
                 .build();
-
-        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/attack")
     @Operation(summary = "Perform an attack", description = "Human player attacks at the specified position on the opponent's board")
-    public ResponseEntity<AttackResponseDto> attack(
+    public AttackResponseDto attack(
             @RequestBody AttackRequestDto request,
             HttpSession session) {
         
@@ -93,24 +91,22 @@ public class GameRestController {
         boolean gameOver = game.getStatus().getState() == Game.GameState.GAME_OVER;
         String message = determineAttackMessage(attackResult, game);
 
-        AttackResponseDto response = AttackResponseDto.builder()
+        return AttackResponseDto.builder()
                 .hit(hit)
                 .shipSunk(shipSunk)
                 .gameOver(gameOver)
                 .message(message)
                 .gameState(GameStateDto.fromGame(game))
                 .build();
-
-        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/reset")
     @Operation(summary = "Reset the game", description = "Resets the current game and starts a new one")
-    public ResponseEntity<GameStateDto> resetGame(HttpSession session) {
+    public GameStateDto resetGame(HttpSession session) {
         log.atDebug().setMessage("Resetting game...").log();
         Game game = gameManager.startNewGame();
         session.setAttribute("game", game);
-        return ResponseEntity.ok(GameStateDto.fromGame(game));
+        return GameStateDto.fromGame(game);
     }
 
     private Game getGameFromSession(HttpSession session) {
@@ -121,17 +117,12 @@ public class GameRestController {
     }
 
     private String determineAttackMessage(Board.ATTACK_RESULT attackResult, Game game) {
-        switch (attackResult) {
-            case FAULT:
-                return "Invalid attack position";
-            case MISS:
-                return "Miss! Computer's turn.";
-            case HIT:
-                return "Hit! Your turn again.";
-            case SUNK:
-                return "Ship sunk! Your turn again.";
-            default:
-                return "Unknown attack result";
-        }
+        return switch (attackResult) {
+            case FAULT -> "Invalid attack position";
+            case MISS -> "Miss! Computer's turn.";
+            case HIT -> "Hit! Your turn again.";
+            case SUNK -> "Ship sunk! Your turn again.";
+            default -> "Unknown attack result";
+        };
     }
 }

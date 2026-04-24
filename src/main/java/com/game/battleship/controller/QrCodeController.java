@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Slf4j
 @Controller
@@ -30,7 +31,8 @@ public class QrCodeController {
         this.codesManager = codesManager;
     }
 
-    @GetMapping("qrCode/{page}")
+    @GetMapping(value = "qrCode/{page}", produces = MediaType.IMAGE_PNG_VALUE)
+    @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Generate QR code for URL", description = "Generates a QR code image for the specified page URL.")
     public ResponseEntity<byte[]> getUrlQrCode(@Parameter(description = "The page path to generate QR code for") @PathVariable String page) {
 
