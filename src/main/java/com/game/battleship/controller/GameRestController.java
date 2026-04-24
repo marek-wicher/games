@@ -27,18 +27,18 @@ import static com.game.battleship.util.Commons.BOARD_SIZE;
 @Tag(name = "Game REST API", description = "Handles game-related REST operations for the Battleship game")
 @RequiredArgsConstructor
 @Validated
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:8080", "http://localhost:5173"}, allowCredentials = "true")
 public class GameRestController {
     private final GameManager gameManager;
     private final AttackService attackService;
 
     @PostMapping("/start")
     @Operation(summary = "Start a new game", description = "Initializes a new Battleship game")
-    public ResponseEntity<GameStateDto> startGame(HttpSession session) {
+    public GameStateDto startGame(HttpSession session) {
         log.atDebug().setMessage("Starting new game...").log();
         Game game = gameManager.startNewGame();
         session.setAttribute("game", game);
-        return ResponseEntity.ok(GameStateDto.fromGame(game));
+        return GameStateDto.fromGame(game);
     }
 
     @GetMapping("/state")
@@ -113,7 +113,6 @@ public class GameRestController {
     @Operation(summary = "Reset the game", description = "Resets the current game and starts a new one")
     public ResponseEntity<GameStateDto> resetGame(HttpSession session) {
         log.atDebug().setMessage("Resetting game...").log();
-        session.invalidate();
         Game game = gameManager.startNewGame();
         session.setAttribute("game", game);
         return ResponseEntity.ok(GameStateDto.fromGame(game));

@@ -1,10 +1,13 @@
 package com.game.battleship.dto;
 
 import com.game.battleship.model.Game;
+import com.game.battleship.model.Player;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Optional;
 
 @Data
 @Builder
@@ -22,9 +25,12 @@ public class GameStateDto {
     public static GameStateDto fromGame(Game game) {
         return GameStateDto.builder()
                 .humanBoard(BoardDto.fromBoard(game.getHuman().getBoard()))
-                .computerBoard(BoardDto.fromBoard(game.getComputer().getBoard()))
+                .computerBoard(SecretBoardDTO.decorate(BoardDto.fromBoard(game.getComputer().getBoard())))
                 .gameStatus(game.getStatus().getState().name())
-                .currentPlayer(game.getStatus().getCurrentPlayer().getName())
+                .currentPlayer(Optional.ofNullable(game.getStatus())
+                        .map(Game.GameStatus::getCurrentPlayer)
+                        .map(Player::getName)
+                        .orElse(null))
                 .message(game.getStatus().getMessage())
                 .gameOver(game.getStatus().getState() == Game.GameState.GAME_OVER)
                 .winner(determineWinner(game))

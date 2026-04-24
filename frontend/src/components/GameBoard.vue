@@ -31,12 +31,16 @@ export default {
       type: Boolean,
       default: false
     },
+    human: {
+          type: Boolean,
+          default: false
+        },
     highlight: {
       type: Boolean,
       default: true
     }
   },
-  emits: ['cell-click'],
+  emits: ['cell-click', 'own-cell-click'],
   methods: {
     getCellClass(cell) {
       const classes = ['cell-base']
@@ -56,14 +60,17 @@ export default {
       return classes
     },
     getCellDisplay(cell) {
-      if (cell.status === 'HIT') return '??'
-      if (cell.status === 'MISS') return '?'
-      if (cell.hasShip && this.readonly) return '??'
+      if (cell.status === 'HIT') return 'X'
+      if (cell.status === 'MISS') return '*'
+      if (cell.hasShip && this.readonly) return '+'
       return ''
     },
     cellClick(cell) {
-      if (!this.readonly) {
+      if (!this.readonly && !this.human) {
         this.$emit('cell-click', cell.row, cell.col)
+      } else if(!this.readonly && this.human) {
+        // Optional: Show ship details or other info when clicking on own board
+        this.$emit('own-cell-click', cell.row, cell.col)
       }
     }
   }

@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="battleship-app">
     <header class="app-header">
-      <h1>?? Battleship Game</h1>
+      <h1>Battleship Game</h1>
       <p>Play against the computer</p>
     </header>
     <main class="app-main">
@@ -16,8 +16,10 @@
             <div class="board-section">
               <h2>Your Board</h2>
               <GameBoard 
-                :board="gameState?.humanBoard" 
-                :readonly="true"
+                :board="gameState?.humanBoard"
+                @own-cell-click="markOwnShipPosition"
+                :human="true"
+                :readonly="false"
                 :highlight="false"
               />
             </div>
@@ -39,7 +41,7 @@
               <ShipPlacement @place-ship="handlePlaceShip" />
             </div>
             <div v-if="gameState?.gameOver" class="game-over-section">
-              <h3>{{ gameState.winner === 'HUMAN' ? '?? You Won!' : '?? You Lost!' }}</h3>
+              <h3>{{ gameState.winner === 'HUMAN' ? 'You Won!' : 'You Lost!' }}</h3>
               <button @click="resetGame" class="btn btn-primary">
                 Play Again
               </button>
@@ -121,6 +123,18 @@ export default {
         loading.value = false
       }
     }
+    const markOwnShipPosition = async (row, col) => {
+          if (gameState.value?.gameStatus !== 'PLACING_SHIPS') return
+          loading.value = true
+          try {
+            alert('You clicked on your own board at (' + row + ', ' + col + '). This is just a demo action.')
+            error.value = null
+          } catch (err) {
+            error.value = 'Failed to attack: ' + (err.response?.data?.message || err.message)
+          } finally {
+            loading.value = false
+          }
+        }
     const resetGame = async () => {
       loading.value = true
       try {
@@ -144,6 +158,7 @@ export default {
       startGame,
       handlePlaceShip,
       handleAttack,
+      markOwnShipPosition,
       resetGame
     }
   }
