@@ -8,14 +8,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import static com.game.battleship.util.Commons.PageViews.MAIN_VIEW;
 import static com.game.battleship.util.Commons.ErrorCodes.PAGE_NOT_FOUND_ERROR;
 import static com.game.battleship.util.Commons.ErrorCodes.PAGE_UNKNOWN_ERROR;
-import static com.game.battleship.util.Commons.PageViews.REDIRECT_TO_GAME_VIEW;
 import static com.game.battleship.util.Commons.ErrorCodes.VALIDATION_ERROR;
 
 @Slf4j
@@ -63,9 +60,7 @@ public class RestGlobalExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponseDto handleRuntimeException(HttpServletRequest req,
-            RuntimeException ex,
-            RedirectAttributes redirectAttributes) {
+    public ErrorResponseDto handleRuntimeException(RuntimeException ex) {
         log.atError()
                 .setMessage("[ERROR RuntimeException] {}: {}. Stack trace: {}")
                 .addArgument(ex.getClass().getName())
