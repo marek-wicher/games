@@ -96,7 +96,7 @@ public class RestGlobalExceptionHandler {
                 .log();
         return ErrorResponseDto.builder()
                 .statusCode(PAGE_NOT_FOUND_ERROR)
-                .message("Page not found")
+                .message("Resource not found")
                 .errorType("NotFound")
                 .timestamp(System.currentTimeMillis())
                 .build();
