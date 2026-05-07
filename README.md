@@ -7,6 +7,8 @@ A web-based implementation of the classic Battleship game built with Spring Boot
 This project is a simple web application that allows users to play Battleship against a computer. The game includes ship placement, turn-based attacks, and a clean web interface using Thymeleaf templates.
 Computer opponent randomly places its ships and attacks the player's board. The game continues until one player sinks all of the opponent's ships.
 
+![Battleship game board](Board.png)
+
 ## Features
 
 - **Ship Placement**: Place your fleet of ships (Carrier, Battleship, Cruiser, Submarine, Destroyer) on a 10x10 grid.
