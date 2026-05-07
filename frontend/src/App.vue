@@ -38,7 +38,7 @@
               :gameMessage="gameMessage"
             />
             <div v-if="gameState?.gameStatus === 'PLACING_SHIPS'" class="placement-section">
-              <ShipPlacement @place-ship="handlePlaceShip" />
+              <ShipPlacement ref="shipPlacementRef" @place-ship="handlePlaceShip" />
             </div>
             <div v-if="gameState?.gameOver" class="game-over-section">
               <h3>{{ gameState.winner === 'HUMAN' ? 'You Won!' : 'You Lost!' }}</h3>
@@ -78,6 +78,7 @@ export default {
     const gameMessage = ref('')
     const loading = ref(false)
     const error = ref(null)
+    const shipPlacementRef = ref(null)
     const startGame = async () => {
       loading.value = true
       try {
@@ -124,17 +125,12 @@ export default {
       }
     }
     const markOwnShipPosition = async (row, col) => {
-          if (gameState.value?.gameStatus !== 'PLACING_SHIPS') return
-          loading.value = true
-          try {
-            alert('You clicked on your own board at (' + row + ', ' + col + '). This is just a demo action.')
-            error.value = null
-          } catch (err) {
-            error.value = 'Failed to attack: ' + (err.response?.data?.message || err.message)
-          } finally {
-            loading.value = false
-          }
-        }
+      if (gameState.value?.gameStatus !== 'PLACING_SHIPS') return
+      if (shipPlacementRef.value) {
+        shipPlacementRef.value.form.row = row
+        shipPlacementRef.value.form.col = col
+      }
+    }
     const resetGame = async () => {
       loading.value = true
       try {
@@ -159,7 +155,8 @@ export default {
       handlePlaceShip,
       handleAttack,
       markOwnShipPosition,
-      resetGame
+      resetGame,
+      shipPlacementRef
     }
   }
 }

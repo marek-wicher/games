@@ -1,12 +1,12 @@
 # Battleship Game Frontend
-Vue.js frontend dla gry Battleship. Aplikacja Single-Page (SPA) komunikuj¹ca siê z REST API backendu.
+Vue.js frontend dla gry Battleship. Aplikacja Single-Page (SPA) komunikuj?ca si? z REST API backendu.
 ## Technologie
 - Vue.js 3
 - Vite (bundler)
 - Axios (HTTP client)
 - CSS 3 (scoped styles)
 ## Instalacja i uruchomienie
-### Instalacja zale¿noœci
+### Instalacja zale?no?ci
 ```bash
 npm install
 ```
@@ -14,51 +14,51 @@ npm install
 ```bash
 npm run dev
 ```
-Serwer dostêpny bêdzie pod adresem `http://localhost:5173`
+Serwer dost?pny b?dzie pod adresem `http://localhost:5173`
 ### Build produkcyjny
 ```bash
 npm run build
 ```
-Wynik bêdzie w folderze `../src/main/resources/static/dist`
+Wynik b?dzie w folderze `../src/main/resources/static/dist`
 ## Struktura projektu
 ```
 src/
-+¦¦ App.vue              # G³ówny komponent aplikacji
-+¦¦ main.js              # Entry point Vue
-+¦¦ components/          # Komponenty Vue
--   +¦¦ GameBoard.vue   # Wyœwietlanie plansz gry
--   +¦¦ GameStatus.vue  # Status gry
--   L¦¦ ShipPlacement.vue # Umieszczanie statków
-+¦¦ services/           # Serwisy API
--   L¦¦ gameService.js  # Komunikacja z backendem
-L¦¦ ...
+??? App.vue              # G?ówny komponent aplikacji
+??? main.js              # Entry point Vue
+??? components/          # Komponenty Vue
+?   ??? GameBoard.vue   # Wy?wietlanie plansz gry
+?   ??? GameStatus.vue  # Status gry
+?   ??? ShipPlacement.vue # Umieszczanie statków
+??? services/           # Serwisy API
+?   ??? gameService.js  # Komunikacja z backendem
+??? ...
 public/                 # Pliki statyczne
 index.html              # HTML entry point
-package.json           # Zale¿noœci npm
+package.json           # Zale?no?ci npm
 vite.config.js         # Konfiguracja Vite
 ```
 ## Komponenty
 ### App.vue
-G³ówny komponent aplikacji, zarz¹dza stanem gry i komunikacj¹ z API.
-**Funkcjonalnoœæ:**
+G?ówny komponent aplikacji, zarz?dza stanem gry i komunikacj? z API.
+**Funkcjonalno??:**
 - Ekran startowy
-- Wyœwietlanie dwóch plansz (gracza i komputera)
-- Zarz¹dzanie stanem gry
-- Obs³uga b³êdów
+- Wy?wietlanie dwóch plansz (gracza i komputera)
+- Zarz?dzanie stanem gry
+- Obs?uga b??dów
 ### GameBoard.vue
-Komponent wyœwietlaj¹cy planszê 10x10.
+Komponent wy?wietlaj?cy plansz? 10x10.
 **Props:**
 - `board` - dane planszy
 - `readonly` - czy plansza jest tylko do odczytu
-- `highlight` - czy podœwietlaæ pola
+- `highlight` - czy pod?wietla? pola
 **Events:**
-- `cell-click` - klikniêcie na komórkê
+- `cell-click` - klikni?cie na komórk?
 ### ShipPlacement.vue
 Formularz do umieszczania statków.
 **Events:**
-- `place-ship` - wys³anie danych o umieszczeniu statku
+- `place-ship` - wys?anie danych o umieszczeniu statku
 ### GameStatus.vue
-Wyœwietla status gry (stan, gracz na turze, wiadomoœci).
+Wy?wietla status gry (stan, gracz na turze, wiadomo?ci).
 ## API Communication
 Serwis `gameService.js` zawiera metody do komunikacji z REST API:
 - `startGame()` - POST /api/game/start
@@ -66,18 +66,18 @@ Serwis `gameService.js` zawiera metody do komunikacji z REST API:
 - `placeShip(shipName, row, col, horizontal)` - POST /api/game/place-ship
 - `attack(row, col)` - POST /api/game/attack
 - `resetGame()` - POST /api/game/reset
-## Rozwi¹zywanie problemów
+## Rozwi?zywanie problemów
 ### CORS errors
-Jeœli widzisz b³êdy CORS, upewnij siê, ¿e backend ma w³¹czon¹ konfiguracjê CORS na porcie 5173.
-### Timeout b³êdy
-Upewnij siê, ¿e backend dzia³a na `http://localhost:8080`
-### Komponent siê nie ³aduje
-SprawdŸ konsolê przegl¹darki (F12) pod k¹tem b³êdów JavaScript.
+Je?li widzisz b??dy CORS, upewnij si?, ?e backend ma w??czon? konfiguracj? CORS na porcie 5173.
+### Timeout b??dy
+Upewnij si?, ?e backend dzia?a na `http://localhost:8080`
+### Komponent si? nie ?aduje
+Sprawd? konsol? przegl?darki (F12) pod k?tem b??dów JavaScript.
 ## Budowanie i deployowanie
-### Razem z Jav¹
+### Razem z Jav?
 ```bash
 npm run build
 ```
-Wbudo dist folder do `src/main/resources/static/dist`
+Wbuduj dist folder do `src/main/resources/static/dist`
 ### Oddzielnie
-Mo¿esz buildowaæ frontend oddzielnie i serwowaæ z innego portu (np. nginx).
+Mo?esz budowa? frontend oddzielnie i serwowa? z innego portu (np. nginx).
