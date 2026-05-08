@@ -2,6 +2,10 @@ package com.game.battleship.logic;
 
 import com.game.battleship.model.Game;
 import com.game.battleship.model.Ship;
+import io.micrometer.core.annotation.Timed;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -22,8 +26,11 @@ import static com.game.battleship.model.Ship.ShipType.SUBMARINE;
 @Slf4j
 @Component
 @RequiredArgsConstructor
+@Observed(name = "gameManager")
+@Timed("gameMangerTimed")
 public class GameManager {
     private final Random numbersGenerator;
+    private final MeterRegistry meterRegistry;
 
     /**
      * Places a ship for the human player on the board. Validates game state,
@@ -36,6 +43,7 @@ public class GameManager {
      * @param horizontal whether the ship is placed horizontally
      * @return true if the ship was placed successfully, false otherwise
      */
+    @Timed("gameMangerTimed.placeShip")
     public boolean placeShip(Game game, String shipType, int row, int col, boolean horizontal) {
         var result = Optional.ofNullable(game)
             .map(isSuccess -> placeHumanShip(game, shipType, row, col, horizontal))
@@ -57,6 +65,7 @@ public class GameManager {
      * Starts a new game by creating a new Game instance and placing the computer's ships randomly on the board.
      * @return the newly created Game instance with computer ships placed
      */
+    @Timed("gameMangerTimed.startNewGame")
     public Game startNewGame() {
         var game = GameFactory.createBasicGame();
         placeComputerShips(game);
@@ -79,6 +88,10 @@ public class GameManager {
                 int col = numbersGenerator.nextInt(BOARD_SIZE);
                 boolean horizontal = numbersGenerator.nextDouble() < 0.5;
                 placed = game.getComputer().getBoard().placeShip(ship, row, col, horizontal);
+                Counter.builder("placeComputerShips.attempt")
+                        .tag("ship.type", ship.getName())
+                        .register(meterRegistry)
+                        .increment();
             }
             if (!placed) {
                 throw new IllegalStateException("Failed to perform Computer attack after " + MAX_LOOP_ITERATIONS + " attempts. Check the board state for issues.");
@@ -103,6 +116,10 @@ public class GameManager {
                     .setMessage("All ships placed. Game state changed to PLAYING. Current player: HUMAN")
                     .log();
         }
+        Counter.builder("placeHumanShips.attempt")
+                .tag("ship.type", ship.getName())
+                .register(meterRegistry)
+                .increment();
         return placed;
     }
 }

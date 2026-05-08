@@ -5,6 +5,8 @@ import com.game.battleship.logic.AttackService;
 import com.game.battleship.logic.GameManager;
 import com.game.battleship.model.Board;
 import com.game.battleship.model.Game;
+import io.micrometer.core.annotation.Counted;
+import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
@@ -22,6 +24,7 @@ import java.util.Optional;
 @Tag(name = "Game REST API", description = "Handles game-related REST operations for the Battleship game")
 @RequiredArgsConstructor
 @Validated
+@Timed(value = "gameRestController", description = "Time taken to execute game REST API methods")
 @CrossOrigin(origins = {"http://localhost:8080", "http://localhost:5173"}, allowCredentials = "true")
 public class GameRestController {
     private final GameManager gameManager;
@@ -29,6 +32,7 @@ public class GameRestController {
 
     @PostMapping("/start")
     @Operation(summary = "Start a new game", description = "Initializes a new Battleship game")
+    @Timed("gameRestController.startGame")
     public GameStateDto startGame(HttpSession session) {
         log.atDebug().setMessage("Starting new game...").log();
         Game game = gameManager.startNewGame();
@@ -38,6 +42,7 @@ public class GameRestController {
 
     @GetMapping("/state")
     @Operation(summary = "Get current game state", description = "Returns the current state of the game")
+    @Timed("gameRestController.getGameState")
     public GameStateDto getGameState(HttpSession session) {
         Game game = getGameFromSession(session);
         return GameStateDto.fromGame(game);
@@ -45,6 +50,7 @@ public class GameRestController {
 
     @PostMapping("/place-ship")
     @Operation(summary = "Place a ship on the board", description = "Places a human player's ship at the specified position and orientation")
+    @Timed("gameRestController.placeShip")
     public PlaceShipResponseDto placeShip(
             @RequestBody PlaceShipRequestDto request,
             HttpSession session) {
@@ -72,6 +78,7 @@ public class GameRestController {
 
     @PostMapping("/attack")
     @Operation(summary = "Perform an attack", description = "Human player attacks at the specified position on the opponent's board")
+    @Timed("gameRestController.attack")
     public AttackResponseDto attack(
             @RequestBody AttackRequestDto request,
             HttpSession session) {
@@ -102,6 +109,7 @@ public class GameRestController {
 
     @PostMapping("/reset")
     @Operation(summary = "Reset the game", description = "Resets the current game and starts a new one")
+    @Timed("gameRestController.resetGame")
     public GameStateDto resetGame(HttpSession session) {
         log.atDebug().setMessage("Resetting game...").log();
         Game game = gameManager.startNewGame();

@@ -3,6 +3,7 @@ package com.game.battleship.logic;
 import com.game.battleship.model.Board;
 import com.game.battleship.model.Game;
 import com.game.battleship.model.Player;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +29,7 @@ class AttackServiceTests {
     @BeforeEach
     void setUp() {
         var random = new SecureRandom();
-        gameManager = new GameManager(random);
+        gameManager = new GameManager(random, new SimpleMeterRegistry());
         attackService = new AttackService(random);
 
     }

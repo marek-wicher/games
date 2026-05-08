@@ -2,6 +2,9 @@ package com.game.battleship.logic;
 
 import com.game.battleship.model.Board;
 import com.game.battleship.model.Game;
+import io.micrometer.core.annotation.Counted;
+import io.micrometer.core.annotation.Timed;
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,8 @@ import static com.game.battleship.util.Commons.MAX_LOOP_ITERATIONS;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Observed(name = "attackService")
+@Timed("attackServiceTimed")
 public class AttackService {
     private final Random numbersGenerator;
     /**
@@ -27,6 +32,7 @@ public class AttackService {
      * @param col the column position to attack
      * @return the result of the attack
      */
+    @Timed("attackServiceTimed.performAttackRound")
     public Board.ATTACK_RESULT performAttackRound(Game game, int row, int col) {
         var humanAttackResult = Optional.ofNullable(game)
                 .map(isSuccess -> humanAttack(game, row, col))
@@ -60,9 +66,6 @@ public class AttackService {
                 game.getStatus().setState(Game.GameState.GAME_OVER);
                 game.getStatus().setMessage("You win!");
             }
-//            else {
-//                computerAttack(game);
-//            }
         }
         return hit;
     }

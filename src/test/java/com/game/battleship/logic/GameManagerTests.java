@@ -1,5 +1,6 @@
 package com.game.battleship.logic;
 
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +17,7 @@ class GameManagerTests {
     @BeforeEach
     void setUp() {
         var random = new SecureRandom();
-        gameManager = new GameManager(random);
+        gameManager = new GameManager(random, new SimpleMeterRegistry());
 
     }
 
