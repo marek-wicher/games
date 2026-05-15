@@ -5,14 +5,12 @@ import com.game.battleship.logic.AttackService;
 import com.game.battleship.logic.GameManager;
 import com.game.battleship.model.Board;
 import com.game.battleship.model.Game;
-import io.micrometer.core.annotation.Counted;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +23,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Validated
 @Timed(value = "gameRestController", description = "Time taken to execute game REST API methods")
-@CrossOrigin(origins = {"http://localhost:8080", "http://localhost:5173"}, allowCredentials = "true")
 public class GameRestController {
     private final GameManager gameManager;
     private final AttackService attackService;
